@@ -1,0 +1,12 @@
+{
+    "name": "wszczurek/orm",
+    "description": "FSBO ORM",
+    "authors": [
+        {
+            "name": "Wojciech Szczurek",
+            "email": "wszczurek@tribpub.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
