@@ -1,17 +1,90 @@
 # FSBO ORM
 Namespace: __FSBO__
+This is great as part of some microframework that can handle Request/Responses. 
 
 ## Features
 - [x] Fully OO. PDO based so PHP7 ready :). 
 - [x] Object persistence.
-- [x] Simple find search method.
+- [x] Simple find() method. Accept either row properties in array or WHERE string for complex queries.
 - [x] Promotes proper property visibility usage within a class.
 - [x] Promotes lazy laoded relationships within Model classes. 
 - [ ] Support for composite keys because some FSBO tables have no primary keys.
 - [ ] FSBO history table support.
 
-## How to use
+## Model Anatomy
+```php
+<?php
+/**
+ * Class Listing generated Thursday, 17-Mar-16 17:43:05 EDT.
+ */
+namespace FSBO\ORM;
 
+use FSBO\ORM;
+
+class Listing extends ORM {
+
+    const TABLE = 'tblListing';
+
+    /* Used to properly identified stored object in runtime. */
+    const PRIMARY_KEY = 'iListingID';
+
+    /** @var [int(11)] $id This is either loaded from DB or auto generated on save(). */
+    public $id;
+
+    /** @var [varchar(20)] $password */
+    public $password;
+
+    /** @var [varchar(25)] $firstName */
+    public $firstName = null;
+
+    /** @var [varchar(25)] $lastName */
+    public $lastName = null;
+
+    /** @var [varchar(50)] $ownerName */
+    public $ownerName;
+
+    protected $photos = null;
+
+    // In PHP 5.6 this should become const.
+    static function selector() {
+        return [
+            'iListingID' => 'id',
+            'szPassword' => 'password',
+            'szFirstName' => 'firstName',
+            'UPPER(szLastName)' => 'lastName', // <-- Note: MySQL applayed function on selector.
+            'szOwnerName' => 'ownerName',
+        ];
+    }
+
+    protected function updater() {
+        return [
+            'szPassword' => $this->password,
+            'szFirstName' => $this->firstName,
+            'szLastName' => $this->lastName,
+            'szOwnerName' => $this->ownerName,
+        ];
+    }
+
+    /**
+     * Lazy loaded relation. Subsequent call to this function won't produce new DB calls.
+     *
+     * @return null|PhotoCaption
+     */
+    public function getPhotoCaptions() {
+        if(is_null($this->photos)) {
+            $this->photos = ORM\PhotoCaption::find([
+                'where' => [
+                    'listingID' => 20727948 // @TODO change to $this->id
+                ]
+            ]);
+        }
+        return $this->photos;
+    }
+
+}
+```
+
+## How to use
 ### Empty Object Instantiation
 FSBO ORM should never return scalar values or arrays as a result. Return single object only. FSBO\ORM\Exception (extends \Exception) will be thrown if given object can't be located using its primary id can't be found.
 
@@ -116,7 +189,7 @@ Object are stored in memory during instantiation, therefore following call won't
 $listing1 = Listing::getInstance(7010);
 $listing2 = Listing::getInstance(7010);
 ```
-Both produce:
+Both produce same object (with same memory location):
 ```php
 FSBO\ORM\Listing Object
 (
