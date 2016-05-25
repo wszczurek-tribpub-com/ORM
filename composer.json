@@ -7,6 +7,5 @@
             "email": "wszczurek@tribpub.com"
         }
     ],
-    "minimum-stability": "dev",
-    "require": {}
+    "minimum-stability": "dev"
 }

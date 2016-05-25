@@ -135,7 +135,7 @@ $listing->save();
 ```
 
 ### Insert
-This will create new record in db
+This will create new record in db.
 
 ```php
 $listing = Listing::getInstance();
@@ -183,7 +183,7 @@ Array
 ```
 
 ### Performance
-Object are stored in memory during instantiation, therefore following call won't create 2 DB queries. This object was already fetched from DB. ORM will get by reference.
+Object are stored in memory during instantiation, therefore following call won't create 2 DB queries. This object was already fetched from DB. ORM will get it by reference.
 
 ```php 
 $listing1 = Listing::getInstance(7010);
@@ -203,19 +203,18 @@ FSBO\ORM\Listing Object
 ```
 
 ### Relationships 
-Object relationships are lazy loaded and defined within object itself usually using find() method.
+Object relationships are lazy loaded and defined within object itself ideally using find() method.
 
 ```php
-
 // Previously initiated object $listing = Listing::getInstance(20727948);
-
 $captions = $listing->getPhotoCaptions();
 
+// Iterable as objects.
 foreach($caption as $caption) {
     echo $caption->title;
 }
 ```
-Produce:
+$captions is:
 ```php
 Array
 (
